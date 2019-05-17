@@ -18,7 +18,7 @@ public class RefreshableTableView: UITableView {
 
     func configureRefreshControl(refreshHandler: @escaping () -> Void) {
         _refreshControl = RefreshControl(refreshHandler: refreshHandler)
-        _refreshControl?.tableView = self
+        _refreshControl?.scrollView = self
         addSubview(_refreshControl!)
     }
 }

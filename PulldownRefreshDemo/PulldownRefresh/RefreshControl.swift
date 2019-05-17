@@ -18,7 +18,7 @@ enum RefreshingState {
 
 public class RefreshControl: UIView {
     private var activityView: UIActivityIndicatorView?
-    public weak var tableView: RefreshableTableView?
+    public weak var scrollView: UIScrollView?
     private let contentOffsetKeyPath = "contentOffset"
     private var refreshHandler: (() -> Void)
     private var refreshingState: RefreshingState = .endedRefreshing
@@ -31,7 +31,7 @@ public class RefreshControl: UIView {
 
     public func refreshDone() {
         refreshingState = .endingRefreshing
-        tableView?.setContentOffset(CGPoint.zero, animated: true)
+        scrollView?.setContentOffset(CGPoint.zero, animated: true)
     }
 
     private func showLoadingIndicator() {
@@ -46,16 +46,16 @@ public class RefreshControl: UIView {
 
     override public func didMoveToSuperview() {
         super.didMoveToSuperview()
-        tableView?.addObserver(self, forKeyPath: contentOffsetKeyPath, options: .new, context: nil)
+        scrollView?.addObserver(self, forKeyPath: contentOffsetKeyPath, options: .new, context: nil)
     }
 
     override public func removeFromSuperview() {
-        tableView?.removeObserver(self, forKeyPath: contentOffsetKeyPath)
+        scrollView?.removeObserver(self, forKeyPath: contentOffsetKeyPath)
         super.removeFromSuperview()
     }
 
     override public func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == contentOffsetKeyPath, let contentOffsetY = tableView?.contentOffset.y {
+        if keyPath == contentOffsetKeyPath, let contentOffsetY = scrollView?.contentOffset.y {
             // default state
             if contentOffsetY >= CGFloat(0) {
                 isHidden = true
@@ -79,9 +79,9 @@ public class RefreshControl: UIView {
                 frame = CGRect(x: 0, y: refreshControlOffsetY, width: UIScreen.main.bounds.width, height: 60)
 
                 // update state when finger leaves
-                if refreshingState == .refreshing && !(tableView?.isDragging ?? true) {
+                if refreshingState == .refreshing && !(scrollView?.isDragging ?? true) {
                     refreshingState = .endedDragging
-                    tableView?.setContentOffset(CGPoint(x: 0, y: -60), animated: true)
+                    scrollView?.setContentOffset(CGPoint(x: 0, y: -60), animated: true)
                 }
             }
         }
