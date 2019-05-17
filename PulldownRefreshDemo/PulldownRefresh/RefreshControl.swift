@@ -22,10 +22,11 @@ public class RefreshControl: UIView {
     private let contentOffsetKeyPath = "contentOffset"
     private var refreshHandler: (() -> Void)
     private var refreshingState: RefreshingState = .endedRefreshing
+    private let refreshViewHeight: CGFloat = 60
 
     init(refreshHandler: @escaping () -> Void) {
         self.refreshHandler = refreshHandler
-        super.init(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 60))
+        super.init(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: refreshViewHeight))
         backgroundColor = UIColor.clear
     }
 
@@ -75,13 +76,13 @@ public class RefreshControl: UIView {
                 }
 
                 // adjust position
-                let refreshControlOffsetY = min(-60, contentOffsetY)
-                frame = CGRect(x: 0, y: refreshControlOffsetY, width: UIScreen.main.bounds.width, height: 60)
+                let refreshControlOffsetY = min(-refreshViewHeight, contentOffsetY)
+                frame = CGRect(x: 0, y: refreshControlOffsetY, width: UIScreen.main.bounds.width, height: refreshViewHeight)
 
                 // update state when finger leaves
                 if refreshingState == .refreshing && !(scrollView?.isDragging ?? true) {
                     refreshingState = .endedDragging
-                    scrollView?.setContentOffset(CGPoint(x: 0, y: -60), animated: true)
+                    scrollView?.setContentOffset(CGPoint(x: 0, y: -refreshViewHeight), animated: true)
                 }
             }
         }
